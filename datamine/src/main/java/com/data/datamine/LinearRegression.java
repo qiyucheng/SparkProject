@@ -23,8 +23,9 @@ public class LinearRegression {
     JavaSparkContext sc = new JavaSparkContext(conf);
 
     // Load and parse the data
-    String path = "C://Users//Administrator//workspace//lpsa.data";
+    //String path = "C://Users//Administrator//workspace//lpsa.data";
     
+    String path = "C://Users//Administrator//workspace//test.txt";
     JavaRDD<String> data = sc.textFile(path);
     JavaRDD<LabeledPoint> parsedData = data.map(
       new Function<String, LabeledPoint>() {
@@ -43,7 +44,7 @@ public class LinearRegression {
     // Building the model
     int numIterations = 100;
     final LinearRegressionModel model =
-      LinearRegressionWithSGD.train(JavaRDD.toRDD(parsedData), numIterations);
+      LinearRegressionWithSGD.train(JavaRDD.toRDD(parsedData), numIterations,0.01);
 
     // Evaluate model on training examples and compute training error
     JavaRDD<Tuple2<Double, Double>> valuesAndPreds = parsedData.map(
@@ -61,10 +62,14 @@ public class LinearRegression {
         }
       }
     ).rdd()).mean();
+    double[] d = new double[]{15,15};
+    Vector v = Vectors.dense(d);
     System.out.println("training Mean Squared Error = " + MSE);
+    System.out.println("预测值为："+model.predict(v));
+    
 
     // Save and load model
-    model.save(sc.sc(), "C://Users//Administrator//workspace//myModelPath");
-    LinearRegressionModel sameModel = LinearRegressionModel.load(sc.sc(), "C://Users//Administrator//workspace//myModelPath");
+   // model.save(sc.sc(), "C://Users//Administrator//workspace//myModelPath");
+   // LinearRegressionModel sameModel = LinearRegressionModel.load(sc.sc(), "C://Users//Administrator//workspace//myModelPath");
   }
 }
